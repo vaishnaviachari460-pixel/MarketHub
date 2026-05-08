@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply transition-colors duration-300;
+}
+
+:root {
+  --primary: #1f2937;
+  --primary-dark: #111827;
+  --accent: #f59e0b;
+  --accent-dark: #d97706;
+  --text: #1f2937;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
+  --bg-light: #f9fafb;
+}
+
+body {
+  @apply font-sans text-gray-900 bg-white;
+}
+
+/* Premium card styles */
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all;
+}
+
+.card-premium {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all;
+}
+
+/* Premium buttons */
+.btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all shadow-md hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg border-2 border-gray-900 hover:bg-gray-900 hover:text-white transition-all;
+}
+
+.btn-outline {
+  @apply px-6 py-3 bg-transparent text-gray-900 font-semibold rounded-lg border-2 border-gray-300 hover:border-gray-900 transition-all;
+}
+
+/* Gradient text */
+.text-gradient {
+  @apply bg-gradient-to-r from-gray-900 to-amber-600 bg-clip-text text-transparent;
+}
+
+/* Input styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  @apply w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-amber-500 transition-colors;
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background-size: 1000px 100%;
+}
+
+/* Premium badges */
+.badge-premium {
+  @apply inline-block px-3 py-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-sm font-semibold rounded-full;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* @keyframes moveDot {
+  0% { left: 0%; }
+  100% { left: 100%; }
+} */
+
+@keyframes moveDot {
+  0%   { left: 0%; }
+  12%  { left: 0%; }     /* ⏸ wait at Zero */
+
+  20%  { left: 33%; }
+  32%  { left: 33%; }    /* ⏸ wait at Save */
+
+  40%  { left: 66%; }
+  52%  { left: 66%; }    /* ⏸ wait at Graph */
+
+  60%  { left: 100%; }
+  72%  { left: 100%; }   /* ⏸ wait at Last */
+
+  100% { left: 0%; }     /* 🔁 back to start */
+}
+
+.animate-moveDot {
+  animation: moveDot 10s ease-in-out infinite;
+}
+html {
+  scroll-behavior: smooth;
+}
