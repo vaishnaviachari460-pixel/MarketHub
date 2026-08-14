@@ -1,13 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, X, LogOut, Store } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, LogOut, Store, Mic, BarChart3 } from 'lucide-react';
 import { AuthContext } from '@/context/AuthContext';
 import { CartContext } from '@/context/CartContext';
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
@@ -26,15 +28,51 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
+  const handleVoiceSearch = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice search is not supported in your browser. Please try Chrome or Edge.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setSearchQuery(transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      alert('Voice search failed. Please try again.');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
         {/* Top Bar */}
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center flex-shrink-0">
-            <div className="text-2xl font-bold text-blue-600">
-              Market<span className="text-orange-500">Hub</span>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              Market<span className="text-orange-500 dark:text-orange-400">Hub</span>
             </div>
           </Link>
           <Link to="/wishlist">
@@ -68,8 +106,16 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-blue-500 text-sm"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-l-md focus:outline-none focus:border-blue-500 text-sm"
               />
+              <button
+                type="button"
+                onClick={handleVoiceSearch}
+                className={`px-3 py-2 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gray-500 dark:bg-gray-600'} text-white hover:opacity-80 transition-colors`}
+                title="Voice Search"
+              >
+                <Mic size={20} />
+              </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors"
@@ -84,7 +130,9 @@ export default function Navbar() {
             {/* Cart Icon */}
             {/* ✅ Language Switcher */}
   <LanguageSwitcher />
-            <Link to="/cart" className="relative text-gray-700 hover:text-blue-600 transition-colors hidden sm:block">
+  {/* Theme Toggle */}
+  <ThemeToggle />
+            <Link to="/cart" className="relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hidden sm:block">
               <ShoppingCart size={24} />
               {cart && cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -96,34 +144,42 @@ export default function Navbar() {
             {/* User Menu */}
             {user ? (
               <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
-                  <User size={24} className="text-gray-700" />
-                  <span className="hidden md:inline text-sm text-gray-700">{user.name}</span>
+                <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <User size={24} className="text-gray-700 dark:text-gray-300" />
+                  <span className="hidden md:inline text-sm text-gray-700 dark:text-gray-300">{user.name}</span>
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <Link
                     to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 first:rounded-t-md"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-md"
                   >
                     My Profile
                   </Link>
                   {user.role === 'vendor' && (
-                    <Link
-                      to="/vendor/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <Store size={16} /> Seller Dashboard
-                    </Link>
+                    <>
+                      <Link
+                        to="/vendor/dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                      >
+                        <Store size={16} /> Seller Dashboard
+                      </Link>
+                      <Link
+                        to="/vendor/analytics"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                      >
+                        <BarChart3 size={16} /> Analytics
+                      </Link>
+                    </>
                   )}
                   <Link
                     to="/cart"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 md:hidden"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden"
                   >
                     My Cart ({cart && cart.length})
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 last:rounded-b-md flex items-center gap-2"
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 last:rounded-b-md flex items-center gap-2"
                   >
                     <LogOut size={16} /> Logout
                   </button>
@@ -133,7 +189,7 @@ export default function Navbar() {
               <div className="flex gap-2">
                 <Link
                   to="/login"
-                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors hidden sm:inline-block"
+                  className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors hidden sm:inline-block"
                 >
                   Login
                 </Link>
@@ -149,7 +205,7 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-gray-100"
+              className="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -164,8 +220,16 @@ export default function Navbar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-blue-500 text-sm"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-l-md focus:outline-none focus:border-blue-500 text-sm"
             />
+            <button
+              type="button"
+              onClick={handleVoiceSearch}
+              className={`px-2 py-2 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gray-500 dark:bg-gray-600'} text-white hover:opacity-80 transition-colors`}
+              title="Voice Search"
+            >
+              <Mic size={18} />
+            </button>
             <button
               type="submit"
               className="px-3 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
@@ -177,18 +241,18 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-gray-200">
+          <div className="md:hidden pb-4 border-t border-gray-200 dark:border-gray-700">
             {!user && (
               <div className="flex flex-col gap-2 py-2">
                 <Link
                   to="/login"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
                 >
                   Sign Up
                 </Link>

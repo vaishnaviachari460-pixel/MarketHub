@@ -19,6 +19,8 @@ public class SecurityConfig {
                 .requestMatchers("/products/**").permitAll()
                 // Allow public access to auth endpoints
                 .requestMatchers("/auth/register", "/auth/register/vendor", "/auth/login").permitAll()
+                // Allow public access to admin endpoints (for demo purposes - should be secured in production)
+                .requestMatchers("/api/admin/**").permitAll()
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )

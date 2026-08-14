@@ -9,6 +9,7 @@ import {
   ChevronRight,
   TrendingUp,
 } from 'lucide-react';
+import RecommendationEngine from '@/components/recommendations/RecommendationEngine';
 
 // Categories
 const categories = [
@@ -30,6 +31,9 @@ const featuredProducts = [
     price: 99.99,
     originalPrice: 149.99,
     rating: 4.5,
+    reviewCount: 234,
+    category: 'Electronics',
+    description: 'High-quality wireless headphones with noise cancellation',
     image: '🎧',
   },
   {
@@ -38,6 +42,9 @@ const featuredProducts = [
     price: 29.99,
     originalPrice: 49.99,
     rating: 4.8,
+    reviewCount: 156,
+    category: 'Electronics',
+    description: 'Ergonomic laptop stand for better posture',
     image: '💻',
   },
   {
@@ -46,6 +53,9 @@ const featuredProducts = [
     price: 34.99,
     originalPrice: 59.99,
     rating: 4.7,
+    reviewCount: 89,
+    category: 'Electronics',
+    description: 'Fast charging portable battery pack',
     image: '🔋',
   },
   {
@@ -54,6 +64,9 @@ const featuredProducts = [
     price: 199.99,
     originalPrice: 299.99,
     rating: 4.6,
+    reviewCount: 178,
+    category: 'Electronics',
+    description: 'Advanced fitness tracking and health monitoring',
     image: '⌚',
   },
 ];
@@ -61,7 +74,7 @@ const featuredProducts = [
 // Banner Deals
 const bannerDeals = [
   { title: 'Up to 70% Off', subtitle: 'Electronics', color: 'from-orange-400 to-orange-600' },
-  { title: 'Summer Sale', subtitle: 'Fashion', color: 'from-pink-400 to-pink-600' },
+  { title: 'Winter Sale', subtitle: 'Fashion', color: 'from-orange-400 to-orange-600' },
   { title: 'New Arrivals', subtitle: 'Home', color: 'from-green-400 to-green-600' },
 ];
 
@@ -80,6 +93,10 @@ export default function Home() {
     navigate(`/products?category=${encodeURIComponent(categoryName)}`);
   };
 
+  const handleProductClick = (product) => {
+    navigate(`/products/${product.id}`);
+  };
+
   return (
     <div className="bg-gray-100 space-y-6">
 
@@ -88,12 +105,12 @@ export default function Home() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gradient-to-r from-orange-400 to-orange-600 text-white py-16 px-6"
+        className="bg-gradient-to-r from-pink-400 to-pink-600 text-white py-16 px-6"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              Great Summer Sale
+              Greate winter sale
             </h1>
             <p className="text-lg mb-4">Deals Revealed</p>
 
@@ -225,10 +242,10 @@ export default function Home() {
 
                   <div className="mt-2">
                     <span className="font-bold text-orange-600">
-                      INR{p.price}
+                      ${p.price}
                     </span>
                     <span className="line-through text-gray-400 ml-2 text-sm">
-                      INR{p.originalPrice}
+                      {p.originalPrice}
                     </span>
                   </div>
                 </Link>
@@ -237,6 +254,20 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 🤖 AI RECOMMENDATIONS */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        className="px-4 py-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <RecommendationEngine 
+            products={featuredProducts} 
+            onProductClick={handleProductClick}
+          />
+        </div>
+      </motion.section>
 
       {/* 🚀 CTA */}
       <motion.section 

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.markethub.model.User;
 import com.markethub.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -19,6 +21,7 @@ public class UserService {
   if(user.getRole().equals("vendor")){
    user.setVendorApproved(false);
   }
+  // Email verification is false by default in the User entity
   return repo.save(user);
  }
 
@@ -37,5 +40,21 @@ public class UserService {
  public User updateUser(Long id, User user){
   user.setId(id);
   return repo.save(user);
+ }
+
+ public User findByEmail(String email) {
+  return repo.findByEmail(email);
+ }
+
+ public List<User> getAllUsers() {
+  return repo.findAll();
+ }
+
+ public User updateUser(User user) {
+  return repo.save(user);
+ }
+
+ public void deleteUser(Long id) {
+  repo.deleteById(id);
  }
 }

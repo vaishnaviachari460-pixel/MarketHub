@@ -72,8 +72,12 @@ export default function VendorRegister() {
         businessLicense: formData.businessLicense,
       });
 
-      // Redirect to login after successful registration
-      navigate('/login?registered=true&vendor=true');
+      if (response.data.success) {
+        // Redirect to login after successful registration
+        navigate('/login?registered=true&vendor=true');
+      } else {
+        setError(response.data.message || 'Vendor registration failed. Please try again.');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Vendor registration failed. Please try again.');
     } finally {

@@ -14,11 +14,11 @@
   --text: #1f2937;
   --text-light: #6b7280;
   --border: #e5e7eb;
-  --bg-light: #f9fafb;
+  --bg-light: #11d749;
 }
 
 body {
-  @apply font-sans text-gray-900 bg-white;
+  @apply font-sans text-gray-900 bg-green-50;
 }
 
 /* Premium card styles */
@@ -70,7 +70,7 @@ select {
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
-  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background: linear-gradient(90deg, #f4f6f3 0%, #e5e7eb 50%, #f3f4f6 100%);
   background-size: 1000px 100%;
 }
 

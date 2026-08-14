@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Star, ShoppingCart, ArrowLeft, Heart } from 'lucide-react';
+import { Star, ShoppingCart, ArrowLeft, Heart, Plus, Minus, Check, Truck, Shield, RefreshCw } from 'lucide-react';
 import { productAPI } from '@/services/api';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -25,6 +25,7 @@ export default function ProductDetail() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
+  const [addedToCart, setAddedToCart] = useState(false);
 
   const { addToCart } = useCart();
   const { addToWishlist, isWishlisted } = useWishlist();
@@ -57,10 +58,9 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  // ✅ FIXED ADD TO CART
+  // ✅ ENHANCED ADD TO CART
   const handleAddToCart = () => {
     if (availableSizes.length > 0 && !selectedSize) {
-      alert("Please select size");
       return;
     }
 
@@ -69,6 +69,9 @@ export default function ProductDetail() {
       selectedSize,
       quantity,
     });
+
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
   };
 
   const handleBuyNow = () => {
@@ -182,36 +185,103 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Wishlist */}
-          <button
-            onClick={() => addToWishlist(product)}
-            className="mt-6 flex items-center gap-2"
-          >
-            <Heart className={isWishlisted(product.id) ? "text-red-500 fill-red-500" : ""} />
-            {isWishlisted(product.id) ? "Wishlisted" : "Add to Wishlist"}
-          </button>
-        </div>
+                  </div>
 
-        {/* RIGHT: Buy Box */}
-        <div className="border p-6 rounded-lg shadow-md bg-white">
-          <h2 className="text-3xl font-bold text-green-600">
-            ₹{product.price}
-          </h2>
+        {/* RIGHT: Enhanced Buy Box */}
+        <div className="border p-6 rounded-2xl shadow-lg bg-white sticky top-6">
+          {/* Price */}
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-3xl font-bold text-gray-900">
+              ₹{product.price}
+            </h2>
+            {product.originalPrice && (
+              <span className="text-lg text-gray-400 line-through">
+                ₹{product.originalPrice}
+              </span>
+            )}
+          </div>
 
-          <p className="text-green-600 mt-2">In Stock</p>
+          {/* Stock Status */}
+          <div className="flex items-center gap-2 mt-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <p className="text-green-600 font-medium">In Stock</p>
+            <p className="text-sm text-gray-500">({product.stock || 10} items available)</p>
+          </div>
 
+          {/* Benefits */}
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center gap-3 text-sm">
+              <Truck className="w-4 h-4 text-blue-600" />
+              <span>Free Delivery</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <Shield className="w-4 h-4 text-blue-600" />
+              <span>Secure Payment</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <RefreshCw className="w-4 h-4 text-blue-600" />
+              <span>7-Day Return</span>
+            </div>
+          </div>
+
+          {/* Quantity Selector */}
+          <div className="mt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+            <div className="flex items-center border rounded-lg">
+              <button
+                onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                className="p-2 hover:bg-gray-100 transition-colors"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="px-4 py-2 font-medium min-w-[3rem] text-center">{quantity}</span>
+              <button
+                onClick={() => setQuantity(q => q + 1)}
+                className="p-2 hover:bg-gray-100 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full mt-4 bg-yellow-400 py-2 rounded hover:bg-yellow-500"
+            disabled={addedToCart}
+            className={`w-full mt-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 ${
+              addedToCart
+                ? 'bg-green-500 text-white'
+                : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-lg'
+            }`}
           >
-            Add to Cart
+            {addedToCart ? (
+              <div className="flex items-center justify-center gap-2">
+                <Check className="w-5 h-5" />
+                Added to Cart!
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </div>
+            )}
           </button>
 
+          {/* Buy Now Button */}
           <button
             onClick={handleBuyNow}
-            className="w-full mt-2 bg-orange-500 text-white py-2 rounded hover:bg-orange-600"
+            className="w-full mt-3 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
           >
             Buy Now
+          </button>
+
+          {/* Wishlist Button */}
+          <button
+            onClick={() => addToWishlist(product)}
+            className="w-full mt-3 py-3 rounded-xl border border-gray-300 font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+          >
+            <Heart className={`w-4 h-4 ${isWishlisted(product.id) ? "text-red-500 fill-red-500" : ""}`} />
+            {isWishlisted(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
           </button>
         </div>
       </div>

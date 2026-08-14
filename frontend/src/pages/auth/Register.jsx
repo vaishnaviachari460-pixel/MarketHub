@@ -51,14 +51,18 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await authAPI.register({
+      const response = await authAPI.register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
       });
 
-      navigate('/login?registered=true');
+      if (response.data.success) {
+        navigate('/login?registered=true');
+      } else {
+        setError(response.data.message || 'Registration failed. Please try again.');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

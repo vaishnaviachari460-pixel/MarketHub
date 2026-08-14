@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import Wishlist from '@/pages/Wishlist';    
 import OrderSuccess from './pages/OrderSuccess';
 import Seller from './pages/Seller';
@@ -26,7 +27,9 @@ import ProductDetail from '@/pages/products/ProductDetail';
 import Cart from '@/pages/cart/Cart';
 import Profile from '@/pages/Profile';
 import VendorDashboard from '@/pages/vendor/Dashboard';
+import Analytics from '@/pages/vendor/Analytics';
 import { WishlistProvider } from '@/context/WishlistContext';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
   
 
 // ✅ ADD THIS IMPORT
@@ -35,11 +38,12 @@ import Checkout from '@/pages/checkout/Checkout';
 function App() {
   return (
 
-    <AuthProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <Router>
-            <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <Router>
+              <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
               <Navbar />
               <main className="flex-1">
               <Routes>
@@ -68,15 +72,18 @@ function App() {
 
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+                <Route path="/vendor/analytics" element={<Analytics />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </main>
             <Footer />
           </div>
         </Router>
-        </WishlistProvider>
-      </CartProvider>
-    </AuthProvider>
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
     
   );
 }

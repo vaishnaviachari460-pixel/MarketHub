@@ -33,10 +33,14 @@ export default function Login() {
     setLoading(true);
     try {
       const response = await authAPI.login(email, password);
-      const userData = response.data;
+      const responseData = response.data;
 
-      login(userData);
-      navigate('/');
+      if (responseData.success) {
+        login(responseData.user);
+        navigate('/');
+      } else {
+        setError(responseData.message || 'Invalid email or password');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
     } finally {

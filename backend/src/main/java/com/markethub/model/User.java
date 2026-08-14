@@ -1,5 +1,6 @@
 package com.markethub.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +21,11 @@ public class User {
  private String email;
  private String password;
  private String phone;
- private String role; // customer, vendor
+ private String role; // customer, vendor, admin
+
+ // Email verification - temporarily added for database compatibility
+ @Column(nullable = false)
+ private Boolean emailVerified = true; // Default to true since we removed OTP
 
  // Vendor-specific fields
  private String shopName;
