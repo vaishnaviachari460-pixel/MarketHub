@@ -79,7 +79,7 @@ export default function Products() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await productAPI.getActive();
+        const res = await productAPI.getAll();
         setProducts(res.data || []);
       } catch (err) {
         console.error('Error fetching products:', err);
