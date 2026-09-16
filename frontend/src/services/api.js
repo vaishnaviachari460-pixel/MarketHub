@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'https link';
+const API_BASE = 'https://markethub-u70k.onrender.com/';
 
 const api = axios.create({
   baseURL: API_BASE,
